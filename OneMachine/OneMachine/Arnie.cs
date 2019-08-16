@@ -91,7 +91,7 @@ namespace OneMachine
         private string V(string src)
         {
             string ret = "";
-            for(int i = 0; src.Length != 0 ;)
+            for(; src.Length != 0 ;)
             {
                 ret = ret + src[src.Length - 1];
                 src = src.Substring(0, src.Length - 1);
