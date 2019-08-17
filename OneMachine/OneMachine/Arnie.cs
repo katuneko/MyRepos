@@ -22,11 +22,11 @@ namespace OneMachine
         }
         public void exec(int cnt)
         {
-            Console.WriteLine("start: " + _src);
+            Console.WriteLine("\tstart: " + _src);
             for (int i = 0; i < cnt; i++)
             {
                 _src = execOnce(_src);
-                Console.WriteLine("[" + i + "]: " + _src);
+                Console.WriteLine("\t[" + i + "]: " + _src);
             }
         }
         private string execOnce(string src)
@@ -68,7 +68,7 @@ namespace OneMachine
         {
             if (_isPrint)
             {
-                Console.WriteLine("Exec <Q> => " + src);
+                Console.WriteLine("\tExec <Q> => " + src);
             }
             return src;
         }
@@ -76,15 +76,15 @@ namespace OneMachine
         {
             if (_isPrint)
             {
-                Console.WriteLine("Exec <C> => " + src + "C" + src);
+                Console.WriteLine("\tExec <C> => " + src + "Q" + src);
             }
-            return src + "C" + src;
+            return src + "Q" + src;
         }
         private string R(string src)
         {
             if (_isPrint)
             {
-                Console.WriteLine("Exec <R> => " + src + src);
+                Console.WriteLine("\tExec <R> => " + src + src);
             }
             return src + src;
         }
@@ -98,7 +98,7 @@ namespace OneMachine
             }
             if (_isPrint)
             {
-                Console.WriteLine("Exec <V> => " + ret);
+                Console.WriteLine("\tExec <V> => " + ret);
             }
             return ret;
         }
@@ -106,7 +106,7 @@ namespace OneMachine
         {
             if (_isPrint)
             {
-                Console.WriteLine("Exec <P> => " + src + V(src));
+                Console.WriteLine("\tExec <P> => " + src + V(src));
             }
             return src + V(src);
         }
@@ -114,7 +114,7 @@ namespace OneMachine
         {
             if (_isPrint)
             {
-                Console.WriteLine("Exec <M> => " + src.Substring(1, src.Length - 1) + src[0]);
+                Console.WriteLine("\tExec <M> => " + src.Substring(1, src.Length - 1) + src[0]);
             }
             return src.Substring(1, src.Length - 1) + src[0];
         }

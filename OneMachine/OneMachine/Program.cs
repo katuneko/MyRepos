@@ -143,30 +143,38 @@ namespace OneMachine
                 case Commands.HelpPrint:
                     Assembly asm = Assembly.GetExecutingAssembly();
                     Version ver = asm.GetName().Version;
-                    Console.WriteLine("------------------------------");
-                    Console.WriteLine("arnie machine ver." + ver);
-                    Console.WriteLine("------------------------------");
-                    Console.WriteLine("[usage]");
-                    Console.WriteLine("OneMachine.exe <program string> or <file path>");
+                    Console.WriteLine("\t------------------------------");
+                    Console.WriteLine("\tarnie machine ver." + ver);
+                    Console.WriteLine("\t------------------------------");
+                    Console.WriteLine("\t[usage]");
+                    Console.WriteLine("\tOneMachine.exe <program string> or <file path>");
                     Console.WriteLine("");
 
-                    Console.WriteLine("[program syntax]");
-                    Console.WriteLine("Qx -> x");
-                    Console.WriteLine("Cx -> yCy (x -> y)");
-                    Console.WriteLine("Rx -> yy (x -> y)");
-                    Console.WriteLine("Vx -> inverted y (x -> y)");
-                    Console.WriteLine("Px -> y inverted y (x -> y)");
-                    Console.WriteLine("Mx -> roteted y (x -> y)");
+                    Console.WriteLine("\t[program syntax]");
+                    Console.WriteLine("\tQx -> x");
+                    Console.WriteLine("\tCx -> yQy (x -> y)");
+                    Console.WriteLine("\tRx -> yy (x -> y)");
+                    Console.WriteLine("\tVx -> inverted y (x -> y)");
+                    Console.WriteLine("\tPx -> y inverted y (x -> y)");
+                    Console.WriteLine("\tMx -> roteted y (x -> y)");
                     Console.WriteLine("");
 
-                    Console.WriteLine("[commands]");
-                    Console.WriteLine("exec(e) (option)<execute count>: execute program");
-                    Console.WriteLine("input(i) <program string>: input program(overwrite old program)");
-                    Console.WriteLine("read(r) <filepath>: read program from file(overwrite old program)");
-                    Console.WriteLine("write(w) <filepath>: write program");
-                    Console.WriteLine("print(p): toggle print level");
-                    Console.WriteLine("quit(q): quit machine");
-                    Console.WriteLine("help(h): print this help");
+                    Console.WriteLine("\t[commands]");
+                    Console.WriteLine("\texec(e) (option)<execute count>: execute program");
+                    Console.WriteLine("\tinput(i) <program string>: input program(overwrite old program)");
+                    Console.WriteLine("\tread(r) <filepath>: read program from file(overwrite old program)");
+                    Console.WriteLine("\twrite(w) <filepath>: write program");
+                    Console.WriteLine("\tprint(p): toggle print level");
+                    Console.WriteLine("\tquit(q): quit machine");
+                    Console.WriteLine("\thelp(h): print this help");
+                    Console.WriteLine("");
+
+                    Console.WriteLine("\t[example]");
+                    Console.WriteLine("\tQC -> C");
+                    Console.WriteLine("\tCQC -> CQC");
+                    Console.WriteLine("\tCCQCC -> CCQCC Q CCQCC");
+                    Console.WriteLine("\tCCCQCCC -> CCCQCCC Q CCCQCCC Q CCCQCCC Q CCCQCCC");
+                    Console.WriteLine("\tCQΘC is x -> Θ(x)");
                     break;
                 default:
                     break;
