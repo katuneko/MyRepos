@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace OneMachine
 {
@@ -141,40 +135,7 @@ namespace OneMachine
                     _arnie.togglePrint();
                     break;
                 case Commands.HelpPrint:
-                    Assembly asm = Assembly.GetExecutingAssembly();
-                    Version ver = asm.GetName().Version;
-                    Console.WriteLine("\t------------------------------");
-                    Console.WriteLine("\tarnie machine ver." + ver);
-                    Console.WriteLine("\t------------------------------");
-                    Console.WriteLine("\t[usage]");
-                    Console.WriteLine("\tOneMachine.exe <program string> or <file path>");
-                    Console.WriteLine("");
-
-                    Console.WriteLine("\t[program syntax]");
-                    Console.WriteLine("\tQx -> x");
-                    Console.WriteLine("\tCx -> yQy (x -> y)");
-                    Console.WriteLine("\tRx -> yy (x -> y)");
-                    Console.WriteLine("\tVx -> inverted y (x -> y)");
-                    Console.WriteLine("\tPx -> y inverted y (x -> y)");
-                    Console.WriteLine("\tMx -> roteted y (x -> y)");
-                    Console.WriteLine("");
-
-                    Console.WriteLine("\t[commands]");
-                    Console.WriteLine("\texec(e) (option)<execute count>: execute program");
-                    Console.WriteLine("\tinput(i) <program string>: input program(overwrite old program)");
-                    Console.WriteLine("\tread(r) <filepath>: read program from file(overwrite old program)");
-                    Console.WriteLine("\twrite(w) <filepath>: write program");
-                    Console.WriteLine("\tprint(p): toggle print level");
-                    Console.WriteLine("\tquit(q): quit machine");
-                    Console.WriteLine("\thelp(h): print this help");
-                    Console.WriteLine("");
-
-                    Console.WriteLine("\t[example]");
-                    Console.WriteLine("\tQC -> C");
-                    Console.WriteLine("\tCQC -> CQC");
-                    Console.WriteLine("\tCCQCC -> CCQCC Q CCQCC");
-                    Console.WriteLine("\tCCCQCCC -> CCCQCCC Q CCCQCCC Q CCCQCCC Q CCCQCCC");
-                    Console.WriteLine("\tCQΘC is x -> Θ(x)");
+                    _arnie.printHelp();
                     break;
                 default:
                     break;
