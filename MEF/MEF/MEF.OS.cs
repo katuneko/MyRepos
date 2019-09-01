@@ -10,15 +10,14 @@ using Cpu.Generic;
 
 namespace MEF
 {
-    class Manager
+    class OS
     {
         List<ImportedCpu> _icpu;
         List<GeneratedCpu> _gcpu;
         
-        public Manager() {
+        public OS() {
             //ここでcpu以下のDLLをすべて読み込む
             _icpu = ImportCpu();
-            var task = ExecuteCpuManager();
             _gcpu = new List<GeneratedCpu>();
             debugPrintTitle();
             debugPrintImportedCpu();
@@ -66,21 +65,43 @@ namespace MEF
             return true;
         }
         public bool generate(int iCpuId) {
-            GeneratedCpu genCpu = new GeneratedCpu(_icpu[iCpuId]._cputype);
+            GeneratedCpu genCpu = new GeneratedCpu(_icpu[iCpuId]._cputype, _icpu[iCpuId].getName());
             _gcpu.Add(genCpu);
             return true;
         }
         public bool delete(int gCpuId) {
-            return true;
+            bool ret = false;
+            try{
+                _gcpu.RemoveAt(gCpuId);
+                ret = true;
+            }catch{
+
+            }
+            return ret;
         }
         public bool download(string imagePath) {
             return true;
         }
         public bool run(int gCpuId) {
-            return _gcpu[gCpuId].startThread();
+            bool ret = false;
+            try{
+                _gcpu[gCpuId].startThread();
+                ret = true;
+            }catch{
+
+            }
+            return ret;
         }
         public bool stop(int gCpuId) {
-            return _gcpu[gCpuId].stopThread(); 
+
+            bool ret = false;
+            try{
+                _gcpu[gCpuId].stopThread();
+                ret = true;
+            }catch{
+
+            }
+            return ret; 
         }
         public bool link(int gCpuId, int portNo) {
             return true;
@@ -89,7 +110,30 @@ namespace MEF
             return true;
         }
         public bool state() {
+            debugPrintAllCpuState();
             return true;
+        }
+        private void debugPrintAllCpuState()
+        {
+            for (int i = 0; i < _gcpu.Count; i++)
+            {
+                Console.Write("[" + i + "] " );
+                GeneratedCpu.State s = _gcpu[i].getState();
+                switch (s)
+                {
+                    case GeneratedCpu.State.Run:
+                        Console.Write("<RUN> ");
+                        break;
+                    case GeneratedCpu.State.Stop:
+                        Console.Write("<STOP> ");
+                        break;
+                    case GeneratedCpu.State.Halt:
+                    case GeneratedCpu.State.Invalid:
+                    default:break;
+                }
+                Console.Write(_gcpu[i].getCpuName());
+                Console.WriteLine("");
+            }
         }
         public bool probe() {
             return true;
@@ -150,51 +194,6 @@ namespace MEF
             }
             return cpuList;
         }
-        private async Task<Dummy> ExecuteCpuManager()
-        {
-            Dummy errorInfo = new Dummy();
-            var Loop = Task.Run(() => executeCpuMngLoop());
-            try
-            {
-                await Loop;
-            }
-            catch
-            {
-                return errorInfo;
-            }
-            return errorInfo;
-        }
-
-        private void executeCpuMngLoop()
-        {
-            Object _lockObj;
-            _lockObj = new object();
-            while (true)
-            {
-                lock (_lockObj)
-                {
-
-                }
-                try
-                {
-
-                }
-                catch
-                {
-
-                }
-                finally
-                {
-
-                }
-            }
-        }
-
-        private class Dummy
-        {
-
-        }
-
         public class PortSpec
         {
             public struct Spec
@@ -212,9 +211,14 @@ namespace MEF
                 return _spec;
             }
         }
+        class Dummy
+        {
+
+        }
 
         private class GeneratedCpu
         {
+            private string _cpuName;
             private string _aliasName;
             private PortSpec _pspec;
             private ICpu _cpu;
@@ -229,8 +233,9 @@ namespace MEF
             {
                 Continue, Single, Stop, Halt
             }
-            public GeneratedCpu(Type cpuType)
+            public GeneratedCpu(Type cpuType, string cpuName)
             {
+                _cpuName = cpuName;
                 if (cpuType != null)
                 {
                     var obj = Activator.CreateInstance(cpuType, "");
@@ -279,6 +284,18 @@ namespace MEF
                     return errorInfo;
                 }
                 return errorInfo;
+            }
+            public string getCpuName()
+            {
+                return _cpuName;
+            }
+            public void setAlias(string aliasName)
+            {
+                _aliasName = aliasName;
+            }
+            public string getAlias()
+            {
+                return _aliasName;
             }
             public State getState()
             {

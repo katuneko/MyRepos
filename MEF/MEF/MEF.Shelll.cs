@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace MEF
 {
-    class Terminal
+    class Shell
     {
         public enum Response{
             SUCCESS, ERROR_EXEC, ERROR_CMD, INVALID, HALT
         }
-        private Manager mCpuMng;
-        public Terminal(){
-            mCpuMng = new Manager();
+        private OS _os;
+        public Shell(){
+            _os = new OS();
         }
         private enum Command{
             Invalid, Import,Generate,Delete,Download,Run,Stop,Link,Unlink,State,Probe,Trace,Help,Quit
@@ -23,6 +23,7 @@ namespace MEF
             Command c = Command.Invalid;
             switch(arg[0]){
                 case "import":
+                case "imp":
                 case "i":
                     c = Command.Import;
                     break;
@@ -35,11 +36,19 @@ namespace MEF
                 case "del":
                 case "kill":
                 case "k":
+                case "remove":
+                case "rem":
+                case "rm":
                     c = Command.Delete;
                     break;
                 case "download":
+                case "down":
+                case "dwn":
                 case "dl":
                 case "d":
+                case "program":
+                case "prog":
+                case "prg":
                     c = Command.Download;
                     break;
                 case "run":
@@ -47,20 +56,27 @@ namespace MEF
                     c = Command.Run;
                     break;
                 case "stop":
-                case "halt":
-                case "program":
+                case "stp":
                 case "s":
+                case "halt":
+                case "hlt":
                     c = Command.Stop;
                     break;
                 case "link":
+                case "lnk":
                 case "l":
                     c = Command.Link;
                     break;
                 case "unlink":
+                case "ulink":
+                case "ulnk":
+                case "unl":
                 case "u":
                     c = Command.Unlink;
                     break;
                 case "state":
+                case "stat":
+                case "sta":
                 case "j":
                     c = Command.State;
                     break;
@@ -99,7 +115,7 @@ namespace MEF
                         rsp = Response.ERROR_CMD;
                         break;
                     }
-                    ret = mCpuMng.import(arg[1]);
+                    ret = _os.import(arg[1]);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.Generate:
@@ -114,7 +130,7 @@ namespace MEF
                         rsp = Response.ERROR_CMD;
                         break;
                     }
-                    ret = mCpuMng.generate(gCpuId);
+                    ret = _os.generate(gCpuId);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
 
                     break;
@@ -129,7 +145,7 @@ namespace MEF
                         rsp = Response.ERROR_CMD;
                         break;
                     }
-                    ret = mCpuMng.delete(gCpuId);
+                    ret = _os.delete(gCpuId);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.Download: 
@@ -137,7 +153,7 @@ namespace MEF
                         rsp = Response.ERROR_CMD;
                         break;
                     }
-                    ret = mCpuMng.download(arg[1]);
+                    ret = _os.download(arg[1]);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.Run:
@@ -152,7 +168,7 @@ namespace MEF
                         rsp = Response.ERROR_CMD;
                         break;
                     }
-                    ret = mCpuMng.run(gCpuId);
+                    ret = _os.run(gCpuId);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.Stop:
@@ -167,20 +183,23 @@ namespace MEF
                         rsp = Response.ERROR_CMD;
                         break;
                     }
-                    ret = mCpuMng.stop(gCpuId);
+                    ret = _os.stop(gCpuId);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.Link: 
                     break;
                 case Command.Unlink: 
                     break;
-                case Command.State: 
+                case Command.State:
+                    ret = _os.state();
+                    rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.Probe: 
                     break;
                 case Command.Trace: 
                     break;
-                case Command.Help: 
+                case Command.Help:
+                    _os.help();
                     break;
                 case Command.Quit:
                     rsp = Response.HALT;

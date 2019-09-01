@@ -47,8 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MEF.Manager.cs" />
-    <Compile Include="MEF.Terminal.cs" />
+    <Compile Include="MEF.OS.cs" />
+    <Compile Include="MEF.Shelll.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
