@@ -11,11 +11,17 @@ namespace Cpu.Arnie
         private string _src;
         private bool _isPrint;
         public Port _port;
+        public PortSpec[] _pspec;
         public Arnie(string src)
         {
             _src = src;
             _isPrint = false;
-            _port = new Port();
+
+            _pspec = new PortSpec[]
+            {
+                new PortSpec(0, "probe point"),
+            };
+            _port = new Port(_pspec);
         }
         public void trace(int traceLevel)
         {
@@ -136,7 +142,7 @@ namespace Cpu.Arnie
             sw.Write(_src);
             sw.Close();
         }
-        public bool input(string src)
+        public bool download(string src)
         {
             _src = src;
             return true;

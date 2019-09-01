@@ -14,6 +14,7 @@ namespace MEF
             Shell.Response rsp = Shell.Response.INVALID;
             string str = "";
             while(rsp != Shell.Response.HALT){
+                Console.Write("> ");
                 str = Console.ReadLine();
                 try
                 {
@@ -21,7 +22,7 @@ namespace MEF
                     switch (rsp)
                     {
                         case Shell.Response.SUCCESS:
-                            Console.WriteLine("Command Execution Success.");
+                            //Console.WriteLine("Success.");
                             break;
                         case Shell.Response.ERROR_CMD:
                             Console.WriteLine("Invalid Command.");
@@ -38,9 +39,9 @@ namespace MEF
                         default: break;
                     }
                 }
-                catch
+                catch(ArithmeticException e)
                 {
-                    Console.WriteLine("Unknown Error.");
+                    Console.WriteLine("Unknown Error." + e);
                 }
             }
         }

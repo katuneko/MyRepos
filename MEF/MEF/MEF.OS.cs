@@ -23,7 +23,9 @@ namespace MEF
             debugPrintImportedCpu();
         }
         private void debugPrintTitle(){
-            Console.WriteLine("-- MEF User Interface --");
+            Assembly asm = Assembly.GetExecutingAssembly();
+            Version ver = asm.GetName().Version;
+            Console.WriteLine("-- MEF OS ver." + ver + " --");
         }
         private void debugPrintHelp()
         {
@@ -54,7 +56,7 @@ namespace MEF
         }
         private void debugPrintImportedCpu()
         {
-            Console.WriteLine("[Import CPU List]");
+            Console.WriteLine("Imported CPU List:");
             for (int i = 0;  i < _icpu.Count; i++)
             {
                 ImportedCpu cpu = _icpu[i];
