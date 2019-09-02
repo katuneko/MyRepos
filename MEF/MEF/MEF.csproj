@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MEF.OS.cs" />
-    <Compile Include="MEF.Shelll.cs" />
+    <Compile Include="MEF.Shell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

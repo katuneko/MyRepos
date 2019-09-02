@@ -14,7 +14,8 @@ namespace MEF
     {
         List<ImportedCpu> _icpu;
         List<GeneratedCpu> _gcpu;
-        
+        private static readonly SemaphoreSlim _debugSem = new SemaphoreSlim(1, 1);
+
         public OS() {
             //ここでcpu以下のDLLをすべて読み込む
             _icpu = ImportCpu();
@@ -105,8 +106,18 @@ namespace MEF
             }
             return ret; 
         }
-        public bool link(int gCpuId, int portNo) {
-            return true;
+        public bool link(int inCpuId, int inPortNo, int outCpuId, int outPortNo) {
+            bool ret = false;
+            try
+            {
+                _gcpu[inCpuId].addLink(inPortNo, _gcpu[outCpuId], outPortNo);
+                ret = true;
+            }
+            catch
+            {
+
+            }
+            return ret;
         }
         public bool unlink(int gCpuId, int portNo) {
             return true;
@@ -135,6 +146,22 @@ namespace MEF
                 }
                 Console.Write(_gcpu[i].getCpuName());
                 Console.WriteLine("");
+
+                _debugSem.Wait();
+                Port p = _gcpu[i].getPort();
+                Dictionary<int, dynamic> buf = new Dictionary<int, dynamic>(p._iBuf);
+                Console.WriteLine("Input Port");
+                foreach (dynamic d in buf)
+                {
+                    Console.WriteLine("[{0}], Value = {1}", d.Key, d.Value);
+                }
+                buf = new Dictionary<int, dynamic>(p._oBuf);
+                Console.WriteLine("Output Port");
+                foreach (dynamic d in buf)
+                {
+                    Console.WriteLine("[{0}], Value = {1}", d.Key, d.Value);
+                }
+                _debugSem.Release();
             }
         }
         public bool probe() {
@@ -179,8 +206,7 @@ namespace MEF
                         foreach(Type t in asm.GetTypes()){
                             //アセンブリ内のすべての型について、
                             //プラグインとして有効か調べる
-                            if (t.IsClass && t.IsPublic && !t.IsAbstract && t.FullName != "Cpu.Generic.Port")
-
+                            if (t.IsClass && t.IsPublic && !t.IsAbstract && t.FullName != "Cpu.Generic.Port" && t.FullName != "Cpu.Generic.ICpu")
                             {
                                 //Assemblyじゃなくてもよい？
                                 ImportedCpu cpu = new ImportedCpu();
@@ -218,6 +244,47 @@ namespace MEF
 
         }
 
+        class Link
+        {
+            public GeneratedCpu _inCpu;
+            public int _inPortNo;
+            public GeneratedCpu _outCpu;
+            public int _outPortNo;
+            public Link(GeneratedCpu inCpu, int inPortNo, GeneratedCpu outCpu, int outPortNo)
+            {
+                this._inCpu = inCpu;
+                this._inPortNo = inPortNo;
+                this._outCpu = outCpu;
+                this._outPortNo = outPortNo;
+            }
+            public void send()
+            {
+                Port inP = _inCpu.getPort();
+                Port outP = _outCpu.getPort();
+                try
+                {
+                    
+                    if (outP._oBuf.ContainsKey(_outPortNo))
+                    {
+
+                        if (inP._iBuf.ContainsKey(_inPortNo))
+                        {
+                            inP._iBuf[_inPortNo] = outP._oBuf[_outPortNo];
+                        }
+                        else
+                        {
+                            inP._iBuf.Add(_inPortNo, outP._oBuf[_outPortNo]);
+                        }
+                    }
+                }
+                catch
+                {
+
+                }
+
+            }
+        }
+
         private class GeneratedCpu
         {
             private string _cpuName;
@@ -227,6 +294,8 @@ namespace MEF
             private InternalState _inState;
             private readonly SemaphoreSlim _stopSem = new SemaphoreSlim(1, 1);
             private readonly object _locker= new object();
+            private List<Link> _linkList;
+            private readonly SemaphoreSlim _linkSem = new SemaphoreSlim(1, 1);
             public enum State
             {
                 Run, Stop, Halt, Invalid
@@ -244,6 +313,7 @@ namespace MEF
                     _cpu = (ICpu)obj;
                 }
                 var task = MakeThread();
+                _linkList = new List<Link>();
             }
             ~GeneratedCpu()
             {
@@ -255,11 +325,23 @@ namespace MEF
                 {
                     if (_inState == InternalState.Continue)
                     {
+                        _debugSem.Wait();
                         _cpu.step();
+                        _linkSem.Wait();
+                        foreach (Link l in _linkList)
+                        {
+                            l.send();
+                        }
+                        _linkSem.Release();
+                        _debugSem.Release();
                     }
                     else if (_inState == InternalState.Single)
                     {
                         _cpu.step();
+                        foreach (Link l in _linkList)
+                        {
+                            l.send();
+                        }
                         _inState = InternalState.Stop;
                     }
                     else if (_inState == InternalState.Stop)
@@ -298,6 +380,14 @@ namespace MEF
             public string getAlias()
             {
                 return _aliasName;
+            }
+            public bool addLink(int inPortNo, GeneratedCpu outCpu, int outPortNo)
+            {
+                Link l = new Link(this, inPortNo, outCpu, outPortNo);
+                _linkSem.Wait();
+                _linkList.Add(l);
+                _linkSem.Release();
+                return true;//#todo
             }
             public State getState()
             {
@@ -348,6 +438,10 @@ namespace MEF
             public void stepThread()
             {
                 _inState = InternalState.Single;
+            }
+            public Port getPort()
+            {
+                return _cpu.getPort();
             }
         }
     }

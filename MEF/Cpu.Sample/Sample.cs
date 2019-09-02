@@ -15,9 +15,13 @@ namespace Cpu.Sample
         {
             _pspec = new PortSpec[]
             {
-                new PortSpec(0, "test service A"),
-                new PortSpec(1, "test service B"),
-                new PortSpec(2, "test service C"),
+                new PortSpec(0, typeof(string), typeof(string), "Control",  "Probe"),
+                new PortSpec(1, typeof(bool),   typeof(bool),   "",         "ON"),
+                new PortSpec(2, typeof(bool),   typeof(bool),   "",         "OFF"),
+                new PortSpec(3, typeof(bool),   typeof(bool),   "And(in1)", ""),
+                new PortSpec(4, typeof(bool),   typeof(bool),   "And(in2)", ""),
+                new PortSpec(5, typeof(bool),   typeof(bool),   "",         "And(out)"),
+                new PortSpec(6, typeof(bool),   typeof(bool),   "Not(in)",  "Not(out)"),
             };
             _port = new Port(_pspec);
         }
@@ -27,12 +31,14 @@ namespace Cpu.Sample
         }
         public bool step()
         {
-            string s;
             _port.outP(0, "test");
-            s = _port.inP(1);
-            _port.outP(2, s);
-            s = _port.inP(2);
-            _port.outP(1, s);
+            _port.outP(1, true);
+            _port.outP(2, false);
+            bool b1 = _port.inP<bool>(3);
+            bool b2 = _port.inP<bool>(4);
+            _port.outP(5, b1 & b2);
+            bool b3 = _port.inP<bool>(6);
+            _port.outP(6, !b3);
             return true;
         }
         public void trace(int traceLevel)
@@ -42,6 +48,10 @@ namespace Cpu.Sample
         public void printHelp()
         {
 
+        }
+        public ref Port getPort()
+        {
+            return ref _port;
         }
     }
 }

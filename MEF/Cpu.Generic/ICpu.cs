@@ -9,6 +9,7 @@ namespace Cpu.Generic
         bool step();
         void trace(int traceLevel);
         void printHelp();
+        ref Port getPort();
     }
 
     public class Port
@@ -20,35 +21,42 @@ namespace Cpu.Generic
             _iBuf = new Dictionary<int, dynamic>();
             _oBuf = new Dictionary<int, dynamic>();
         }
-        public void outP(int port, dynamic c)
+        public void outP<T>(int port, T t)
         {
             if (_oBuf.ContainsKey(port))
             {
-                _oBuf[port] = c;
+                _oBuf[port] = t;
             }
             else
             {
-                _oBuf.Add(port, c);
+                _oBuf.Add(port, t);
             }
         }
-        public dynamic inP(int port)
+        public T inP<T>(int port)
         {
             dynamic d = null;
             if (_iBuf.ContainsKey(port))
             {
                 d = _iBuf[port];
+                return d;
             }
-            return d;
+            return default(T);
         }
     }
     public struct PortSpec
     {
         public int portNo;
-        public string service;
-        public PortSpec(int portNo, string service)
+        public Type inType;
+        public Type outType;
+        public string inService;
+        public string outService;
+        public PortSpec(int portNo, Type inType, Type outType, string inService, string outService)
         {
             this.portNo = portNo;
-            this.service = service;
+            this.inType = inType;
+            this.outType = outType;
+            this.inService = inService;
+            this.outService = outService;
         }
     }
 }

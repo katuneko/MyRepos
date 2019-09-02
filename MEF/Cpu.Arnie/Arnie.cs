@@ -19,9 +19,13 @@ namespace Cpu.Arnie
 
             _pspec = new PortSpec[]
             {
-                new PortSpec(0, "probe point"),
+                new PortSpec(0, typeof(string), typeof(string), "Probe", "Probe"),
             };
             _port = new Port(_pspec);
+        }
+        public ref Port getPort()
+        {
+            return ref _port;
         }
         public void trace(int traceLevel)
         {

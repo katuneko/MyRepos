@@ -104,7 +104,7 @@ namespace MEF
 
             Response rsp = Response.INVALID;
             bool ret = false;
-            int iCpuId, gCpuId;
+            int iCpuId, gCpuId, inCpuId, inPortNo, outCpuId, outPortNo;
             bool isSuccess;
             switch(c){
                 case Command.Invalid: 
@@ -186,7 +186,34 @@ namespace MEF
                     ret = _os.stop(gCpuId);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
-                case Command.Link: 
+                case Command.Link:
+                    if (arg.Length < 4)
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    if(!Int32.TryParse(arg[1], out inCpuId))
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    if (!Int32.TryParse(arg[2], out inPortNo))
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    if (!Int32.TryParse(arg[3], out outCpuId))
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    if (!Int32.TryParse(arg[4], out outPortNo))
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    ret = _os.link(inCpuId, inPortNo, outCpuId, outPortNo);
+                    rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.Unlink: 
                     break;
