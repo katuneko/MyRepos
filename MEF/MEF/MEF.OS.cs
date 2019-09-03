@@ -68,9 +68,18 @@ namespace MEF
             return true;
         }
         public bool generate(int iCpuId) {
-            GeneratedCpu genCpu = new GeneratedCpu(_icpu[iCpuId]._cputype, _icpu[iCpuId].getName());
-            _gcpu.Add(genCpu);
-            return true;
+            bool ret = false;
+            try
+            {
+                GeneratedCpu genCpu = new GeneratedCpu(_icpu[iCpuId]._cputype, _icpu[iCpuId].getName());
+                _gcpu.Add(genCpu);
+                ret = true;
+            }
+            catch
+            {
+
+            }
+            return ret;
         }
         public bool delete(int gCpuId) {
             bool ret = false;
@@ -286,10 +295,12 @@ namespace MEF
             private PortSpec _pspec;
             private ICpu _cpu;
             private InternalState _inState;
-            private readonly SemaphoreSlim _stopSem = new SemaphoreSlim(1, 1);
+            private readonly SemaphoreSlim _stopSem = new SemaphoreSlim(0, 1);
             private readonly object _locker= new object();
             private List<Link> _linkList;
             private readonly SemaphoreSlim _linkSem = new SemaphoreSlim(1, 1);
+            private Barrier _groupBarrier;
+            private bool _isBarrierEnable;
             public enum State
             {
                 Run, Stop, Halt, Invalid
@@ -306,8 +317,10 @@ namespace MEF
                     var obj = Activator.CreateInstance(cpuType, "");
                     _cpu = (ICpu)obj;
                 }
+                _inState = InternalState.Stop;
                 var task = MakeThread();
                 _linkList = new List<Link>();
+                _isBarrierEnable = false;
             }
             ~GeneratedCpu()
             {
@@ -317,10 +330,13 @@ namespace MEF
             {
                 while(true)
                 {
-                    if (_inState == InternalState.Continue)
+                    if ((_inState == InternalState.Continue) || (_inState == InternalState.Single))
                     {
                         _debugSem.Wait();
                         _cpu.step();
+                        if(_isBarrierEnable){
+                            _groupBarrier.SignalAndWait();
+                        }
                         _linkSem.Wait();
                         foreach (Link l in _linkList)
                         {
@@ -328,17 +344,7 @@ namespace MEF
                         }
                         _linkSem.Release();
                         _debugSem.Release();
-                    }
-                    else if (_inState == InternalState.Single)
-                    {
-                        _cpu.step();
-                        foreach (Link l in _linkList)
-                        {
-                            l.send();
-                        }
-                        _inState = InternalState.Stop;
-                    }
-                    else if (_inState == InternalState.Stop)
+                    }else if (_inState == InternalState.Stop)
                     {
                         _stopSem.Wait();
                         _stopSem.Release();
@@ -346,6 +352,10 @@ namespace MEF
                     else if (_inState == InternalState.Halt)
                     {
                         break;
+                    }
+
+                    if(_inState == InternalState.Single){
+                        _inState = InternalState.Stop;
                     }
                 }
             }
@@ -381,6 +391,10 @@ namespace MEF
                 _linkSem.Wait();
                 _linkList.Add(l);
                 _linkSem.Release();
+                return true;//#todo
+            }
+            public bool removeLink(int inPortNo, GeneratedCpu outCpu, int outPortNo)
+            {
                 return true;//#todo
             }
             public State getState()
@@ -436,6 +450,13 @@ namespace MEF
             public Port getPort()
             {
                 return _cpu.getPort();
+            }
+            public void enableBarrier(Barrier b){
+                _groupBarrier = b;
+                _isBarrierEnable = true;
+            }
+            public void disableBarrier(){
+                _isBarrierEnable = false;
             }
         }
     }

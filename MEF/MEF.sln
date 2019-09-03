@@ -4,14 +4,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MEF", "MEF\MEF.csproj", "{3F6F1CAA-14D0-4D42-801F-C0366B4BF5D0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7E1AD398-89C4-4EE4-905D-7CCD6B4CF219} = {7E1AD398-89C4-4EE4-905D-7CCD6B4CF219}
+		{A0494FBF-F7F4-4308-AC4C-3EA6455D6FA3} = {A0494FBF-F7F4-4308-AC4C-3EA6455D6FA3}
+		{82FDFEF1-2F9F-4BA7-B615-F737DB4BD5CF} = {82FDFEF1-2F9F-4BA7-B615-F737DB4BD5CF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cpu.Arnie", "Cpu.Arnie\Cpu.Arnie.csproj", "{A0494FBF-F7F4-4308-AC4C-3EA6455D6FA3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{82FDFEF1-2F9F-4BA7-B615-F737DB4BD5CF} = {82FDFEF1-2F9F-4BA7-B615-F737DB4BD5CF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cpu.Generic", "Cpu.Generic\Cpu.Generic.csproj", "{82FDFEF1-2F9F-4BA7-B615-F737DB4BD5CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandBox", "SandBox\SandBox.csproj", "{CC5D071B-A704-414A-B96B-1DE1F41C0704}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cpu.Sample", "Cpu.Sample\Cpu.Sample.csproj", "{7E1AD398-89C4-4EE4-905D-7CCD6B4CF219}"
+	ProjectSection(ProjectDependencies) = postProject
+		{82FDFEF1-2F9F-4BA7-B615-F737DB4BD5CF} = {82FDFEF1-2F9F-4BA7-B615-F737DB4BD5CF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
