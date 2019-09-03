@@ -19,7 +19,7 @@ namespace Cpu.Arnie
 
             _pspec = new PortSpec[]
             {
-                new PortSpec(0, typeof(string), typeof(string), "Probe", "Probe"),
+                new PortSpec(0, typeof(string), "Probe"),
             };
             _port = new Port(_pspec);
         }

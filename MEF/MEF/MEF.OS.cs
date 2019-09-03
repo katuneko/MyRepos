@@ -149,14 +149,8 @@ namespace MEF
 
                 _debugSem.Wait();
                 Port p = _gcpu[i].getPort();
-                Dictionary<int, dynamic> buf = new Dictionary<int, dynamic>(p._iBuf);
-                Console.WriteLine("Input Port");
-                foreach (dynamic d in buf)
-                {
-                    Console.WriteLine("[{0}], Value = {1}", d.Key, d.Value);
-                }
-                buf = new Dictionary<int, dynamic>(p._oBuf);
-                Console.WriteLine("Output Port");
+                Dictionary<int, dynamic> buf = new Dictionary<int, dynamic>(p._buf);
+                Console.WriteLine("Port State");
                 foreach (dynamic d in buf)
                 {
                     Console.WriteLine("[{0}], Value = {1}", d.Key, d.Value);
@@ -264,16 +258,16 @@ namespace MEF
                 try
                 {
                     
-                    if (outP._oBuf.ContainsKey(_outPortNo))
+                    if (outP._buf.ContainsKey(_outPortNo))
                     {
 
-                        if (inP._iBuf.ContainsKey(_inPortNo))
+                        if (inP._buf.ContainsKey(_inPortNo))
                         {
-                            inP._iBuf[_inPortNo] = outP._oBuf[_outPortNo];
+                            inP._buf[_inPortNo] = outP._buf[_outPortNo];
                         }
                         else
                         {
-                            inP._iBuf.Add(_inPortNo, outP._oBuf[_outPortNo]);
+                            inP._buf.Add(_inPortNo, outP._buf[_outPortNo]);
                         }
                     }
                 }
