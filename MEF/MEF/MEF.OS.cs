@@ -119,8 +119,7 @@ namespace MEF
             bool ret = false;
             try
             {
-                _gcpu[inCpuId].addLink(inPortNo, _gcpu[outCpuId], outPortNo);
-                ret = true;
+                ret = _gcpu[inCpuId].addLink(inPortNo, _gcpu[outCpuId], outPortNo);
             }
             catch
             {
@@ -129,7 +128,16 @@ namespace MEF
             return ret;
         }
         public bool unlink(int gCpuId, int portNo) {
-            return true;
+            bool ret = false;
+            try
+            {
+                ret = _gcpu[gCpuId].removeLink(portNo);
+            }
+            catch
+            {
+
+            }
+            return ret;
         }
         public bool state() {
             debugPrintAllCpuState();
@@ -387,15 +395,28 @@ namespace MEF
             }
             public bool addLink(int inPortNo, GeneratedCpu outCpu, int outPortNo)
             {
-                Link l = new Link(this, inPortNo, outCpu, outPortNo);
+                foreach(Link l in _linkList){
+                    if(l._inPortNo == inPortNo){
+                        return false;
+                    }
+                }
+                Link newL = new Link(this, inPortNo, outCpu, outPortNo);
                 _linkSem.Wait();
-                _linkList.Add(l);
+                _linkList.Add(newL);
                 _linkSem.Release();
                 return true;//#todo
             }
-            public bool removeLink(int inPortNo, GeneratedCpu outCpu, int outPortNo)
+            public bool removeLink(int inPortNo)
             {
-                return true;//#todo
+                foreach(Link l in _linkList){
+                    if(l._inPortNo == inPortNo){
+                        _linkSem.Wait();
+                        _linkList.Remove(l);
+                        _linkSem.Release();
+                        return true;
+                    }
+                }
+                return false;//#todo
             }
             public State getState()
             {

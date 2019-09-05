@@ -215,7 +215,24 @@ namespace MEF
                     ret = _os.link(inCpuId, inPortNo, outCpuId, outPortNo);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
-                case Command.Unlink: 
+                case Command.Unlink:
+                    if (arg.Length < 3)
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    if (!Int32.TryParse(arg[1], out inCpuId))
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    if (!Int32.TryParse(arg[2], out inPortNo))
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    ret = _os.unlink(inCpuId, inPortNo);
+                    rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.State:
                     ret = _os.state();
