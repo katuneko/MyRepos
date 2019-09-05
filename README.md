@@ -1,7 +1,7 @@
 # MyRepos
 
 ## MEF
-Infrastructure of Pallarel VM Execution and Intaraction.
+Infrastructure of VM Execution and Intaraction in Pallarel.
 
     Terminal.exe
     MEF.OS.dll
