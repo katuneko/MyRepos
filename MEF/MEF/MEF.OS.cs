@@ -14,12 +14,14 @@ namespace MEF
     {
         List<ImportedCpu> _icpu;
         List<GeneratedCpu> _gcpu;
+        GroupManager _gmng;
         private static readonly SemaphoreSlim _debugSem = new SemaphoreSlim(1, 1);
 
         public OS() {
             //ここでcpu以下のDLLをすべて読み込む
             _icpu = ImportCpu();
             _gcpu = new List<GeneratedCpu>();
+            _gmng = new GroupManager();
             debugPrintTitle();
             debugPrintImportedCpu();
         }
@@ -116,28 +118,49 @@ namespace MEF
             return ret; 
         }
         public bool link(int inCpuId, int inPortNo, int outCpuId, int outPortNo) {
-            bool ret = false;
             try
             {
-                ret = _gcpu[inCpuId].addLink(inPortNo, _gcpu[outCpuId], outPortNo);
+                return _gcpu[inCpuId].addLink(inPortNo, _gcpu[outCpuId], outPortNo);
             }
             catch
             {
-
+                return false;
             }
-            return ret;
         }
         public bool unlink(int gCpuId, int portNo) {
-            bool ret = false;
             try
             {
-                ret = _gcpu[gCpuId].removeLink(portNo);
+                return _gcpu[gCpuId].removeLink(portNo);
             }
             catch
             {
-
+                return false;
             }
-            return ret;
+        }
+        public bool group(List<int> groupList)
+        {
+            try
+            {
+                List<GeneratedCpu> g = new List<GeneratedCpu>();
+                foreach(int i in groupList)
+                {
+                    g.Add(_gcpu[i]);
+                }
+                return _gmng.groupIndep(g);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public bool ungroup(List<int> groupList)
+        {
+            List<GeneratedCpu> g = new List<GeneratedCpu>();
+            foreach (int i in groupList)
+            {
+                g.Add(_gcpu[i]);
+            }
+            return _gmng.ungroup(g);
         }
         public bool state() {
             debugPrintAllCpuState();
@@ -233,6 +256,7 @@ namespace MEF
             }
             return cpuList;
         }
+#if false
         public class PortSpec
         {
             public struct Spec
@@ -250,9 +274,93 @@ namespace MEF
                 return _spec;
             }
         }
+#endif
         class Dummy
         {
 
+        }
+
+        class GroupManager
+        {
+            List<Group> _groupList;
+            public GroupManager()
+            {
+                _groupList = new List<Group>();
+            }
+            public bool groupMarge(List<GeneratedCpu> g)
+            {
+                return true;//todo
+            }
+            public bool groupIndep(List<GeneratedCpu> gCpuList)
+            {
+                this.ungroup(gCpuList);
+                Group newGrp = new Group();
+                foreach (GeneratedCpu gCpu in gCpuList)
+                {
+                    newGrp.addGroup(gCpu);
+                }
+                _groupList.Add(newGrp);
+                return true;//todo
+
+            }
+            public bool ungroup(List<GeneratedCpu> gCpuList)
+            {
+                foreach (GeneratedCpu gCpu in gCpuList)
+                {
+                    foreach (Group g in _groupList)
+                    {
+                        if (g.Exists(gCpu))
+                        {
+                            g.removeGroup(gCpu);
+                        }
+                    }
+                }
+                return true;//todo
+            }
+        }
+
+        class Group
+        {
+            public List<GeneratedCpu> _groupCpu;
+            public Barrier _b;
+            public Group()
+            {
+                _groupCpu = new List<GeneratedCpu>();
+                _b = new Barrier(0);
+            }
+            public bool addGroup(GeneratedCpu g)
+            {
+                try
+                {
+                    _b.AddParticipant();
+                    _groupCpu.Add(g);
+                    g.enableBarrier(_b);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+
+            }
+            public bool removeGroup(GeneratedCpu g)
+            {
+                try
+                {
+                    g.disableBarrier();
+                    _groupCpu.Remove(g);
+                    _b.RemoveParticipant();
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            public bool Exists(GeneratedCpu g)
+            {
+                return _groupCpu.Contains(g);
+            }
         }
 
         class Link

@@ -16,7 +16,7 @@ namespace MEF
             _os = new OS();
         }
         private enum Command{
-            Invalid, Import,Generate,Delete,Download,Run,Stop,Link,Unlink,State,Probe,Trace,Help,Quit
+            Invalid, Import,Generate,Delete,Download,Run,Stop,Link,Unlink,Group, UnGroup, State,Probe,Trace,Help,Quit
         }
         public Response CommnandExecute(string str){
             string[] arg = str.Split(' ');
@@ -74,6 +74,22 @@ namespace MEF
                 case "u":
                     c = Command.Unlink;
                     break;
+                case "group":
+                case "grp":
+                case "gr":
+                case "sync":
+                case "syn":
+                case "sy":
+                    c = Command.Group;
+                    break;
+                case "ungroup":
+                case "ung":
+                case "ug":
+                case "async":
+                case "asy":
+                case "as":
+                    c = Command.UnGroup;
+                    break;
                 case "state":
                 case "stat":
                 case "sta":
@@ -106,7 +122,8 @@ namespace MEF
             bool ret = false;
             int iCpuId, gCpuId, inCpuId, inPortNo, outCpuId, outPortNo;
             bool isSuccess;
-            switch(c){
+            List<int> groupList;
+            switch (c){
                 case Command.Invalid: 
                     rsp = Response.INVALID;
                     break;
@@ -232,6 +249,46 @@ namespace MEF
                         break;
                     }
                     ret = _os.unlink(inCpuId, inPortNo);
+                    rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
+                    break;
+                case Command.Group:
+                    if (arg.Length < 3)
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    groupList = new List<int>();
+                    for(int i = 1; i < arg.Length - 1; i++)
+                    {
+                        int g;
+                        if (!Int32.TryParse(arg[1], out g))
+                        {
+                            rsp = Response.ERROR_CMD;
+                            break;
+                        }
+                        groupList.Add(g);
+                    }
+                    ret = _os.group(groupList);
+                    rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
+                    break;
+                case Command.UnGroup:
+                    if (arg.Length < 3)
+                    {
+                        rsp = Response.ERROR_CMD;
+                        break;
+                    }
+                    groupList = new List<int>();
+                    for (int i = 1; i < arg.Length - 1; i++)
+                    {
+                        int g;
+                        if (!Int32.TryParse(arg[1], out g))
+                        {
+                            rsp = Response.ERROR_CMD;
+                            break;
+                        }
+                        groupList.Add(g);
+                    }
+                    ret = _os.ungroup(groupList);
                     rsp = ret ? Response.SUCCESS : Response.ERROR_EXEC;
                     break;
                 case Command.State:
