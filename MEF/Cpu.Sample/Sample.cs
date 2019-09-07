@@ -42,14 +42,6 @@ namespace Cpu.Sample
             _port.outP(7, !b3);
             return true;
         }
-        public void trace(int traceLevel)
-        {
-
-        }
-        public void printHelp()
-        {
-
-        }
         public ref Port getPort()
         {
             return ref _port;

@@ -263,25 +263,6 @@ namespace MEF
             }
             return cpuList;
         }
-#if false
-        public class PortSpec
-        {
-            public struct Spec
-            {
-                int portNo;
-                string service;
-            }
-            public Spec[] _spec;
-            public void setPortSpec(Spec[] s)
-            {
-                s = _spec;
-            }
-            public Spec[] getPortSpec()
-            {
-                return _spec;
-            }
-        }
-#endif
         class Dummy
         {
 
@@ -289,6 +270,8 @@ namespace MEF
 
         class GroupManager
         {
+            /* todo */
+            //直列実行
             List<Group> _groupList;
             public GroupManager()
             {

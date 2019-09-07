@@ -7,8 +7,6 @@ namespace Cpu.Generic
     {
         bool download(string src);
         bool step();
-        void trace(int traceLevel);
-        void printHelp();
         ref Port getPort();
     }
 
