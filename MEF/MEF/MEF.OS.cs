@@ -155,12 +155,19 @@ namespace MEF
         }
         public bool ungroup(List<int> groupList)
         {
-            List<GeneratedCpu> g = new List<GeneratedCpu>();
-            foreach (int i in groupList)
+            try
             {
-                g.Add(_gcpu[i]);
+                List<GeneratedCpu> g = new List<GeneratedCpu>();
+                foreach (int i in groupList)
+                {
+                    g.Add(_gcpu[i]);
+                }
+                return _gmng.ungroup(g);
             }
-            return _gmng.ungroup(g);
+            catch
+            {
+                return false;
+            }
         }
         public bool state() {
             debugPrintAllCpuState();
