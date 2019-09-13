@@ -47,7 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MEF.Group.cs" />
+    <Compile Include="MEF.OS.GeneratedCpu.cs" />
     <Compile Include="MEF.OS.cs" />
+    <Compile Include="MEF.OS.Link.cs" />
     <Compile Include="MEF.Shell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
