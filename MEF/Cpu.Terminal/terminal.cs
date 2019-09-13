@@ -13,6 +13,7 @@ namespace Cpu.Terminal
 {
     internal partial class terminal : Form
     {
+        private delegate void closeDelegate();
         public terminal()
         {
             InitializeComponent();
@@ -20,6 +21,15 @@ namespace Cpu.Terminal
         public void sendMsg(string str)
         {
             this.Invoke((MethodInvoker)(() => richTextBox1.AppendText(str)));
+        }
+        public void removeThread()
+        {
+            this.Invoke((MethodInvoker)(() => this.Close()));
+        }
+
+        private void Terminal_Shown(object sender, EventArgs e)
+        {
+            this.ActiveControl = null;
         }
     }
     public class term : Generic.ICpu
@@ -37,14 +47,13 @@ namespace Cpu.Terminal
                 new PortSpec(1, typeof(string), "[OUT]Key"),
             };
             _port = new Port(_pspec);
-//            Application.EnableVisualStyles();
-//            Application.SetCompatibleTextRenderingDefault(false);
             _term = new terminal();
             var task = MakeThread();
         }
-        ~term()
+        public bool dispose()
         {
-            Application.Exit();
+            _term.removeThread();
+            return true;
         }
         private async Task<bool> MakeThread()
         {

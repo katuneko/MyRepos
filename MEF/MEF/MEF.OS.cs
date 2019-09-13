@@ -86,6 +86,7 @@ namespace MEF
         public bool delete(int gCpuId) {
             bool ret = false;
             try{
+                _gcpu[gCpuId].dispose();
                 _gcpu.RemoveAt(gCpuId);
                 ret = true;
             }catch{
@@ -428,9 +429,10 @@ namespace MEF
                 _linkList = new List<Link>();
                 _isBarrierEnable = false;
             }
-            ~GeneratedCpu()
+            public bool dispose()
             {
                 removeThread();
+                return true;
             }
             public void execLoop()
             {
@@ -457,6 +459,7 @@ namespace MEF
                     }
                     else if (_inState == InternalState.Halt)
                     {
+                        _cpu.dispose();
                         break;
                     }
 
@@ -560,6 +563,10 @@ namespace MEF
             }
             public void removeThread()
             {
+                if (_stopSem.CurrentCount == 0)
+                {
+                    _stopSem.Release();
+                }
                 _inState = InternalState.Halt;
             }
             public void stepThread()

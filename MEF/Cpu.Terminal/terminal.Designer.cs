@@ -41,14 +41,15 @@
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
-            // Form1
+            // terminal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1571, 1106);
             this.Controls.Add(this.richTextBox1);
-            this.Name = "Form1";
+            this.Name = "terminal";
             this.Text = "Form1";
+            this.Shown += new System.EventHandler(this.Terminal_Shown);
             this.ResumeLayout(false);
 
         }

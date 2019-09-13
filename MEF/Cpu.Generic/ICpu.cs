@@ -7,6 +7,7 @@ namespace Cpu.Generic
     {
         bool download(string src);
         bool step();
+        bool dispose();
         ref Port getPort();
     }
 

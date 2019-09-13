@@ -31,6 +31,10 @@ namespace Cpu.Arnie
         {
             _isPrint = (traceLevel == 0) ? false : true;
         }
+        public bool dispose()
+        {
+            return true;
+        }
         public bool step()
         {
             if (_isPrint)

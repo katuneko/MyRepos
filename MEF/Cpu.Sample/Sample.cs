@@ -42,6 +42,10 @@ namespace Cpu.Sample
             _port.outP(7, !b3);
             return true;
         }
+        public bool dispose()
+        {
+            return true;
+        }
         public ref Port getPort()
         {
             return ref _port;
