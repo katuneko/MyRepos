@@ -39,7 +39,14 @@ namespace Cpu.Generic
             dynamic d = null;
             if (_buf.ContainsKey(port))
             {
-                d = _buf[port].Pop();
+                try
+                {
+                    d = _buf[port].Pop();
+                }
+                catch
+                {
+                }
+
                 return d;
             }
             return default(T);

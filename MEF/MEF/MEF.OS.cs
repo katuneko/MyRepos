@@ -201,7 +201,16 @@ namespace MEF
                 Console.WriteLine("Port State");
                 foreach (dynamic d in buf)
                 {
-                    Console.WriteLine("[{0}], Value = {1}", d.Key, d.Value.Peek());
+                    dynamic c;
+                    try
+                    {
+                        c = d.Value.Peek();
+                    }
+                    catch
+                    {
+                        c = null;
+                    }
+                    Console.WriteLine("[{0}], Value = {1}", d.Key, c);
                 }
                 _debugSem.Release();
             }

@@ -13,10 +13,16 @@ namespace Cpu.Terminal
 {
     internal partial class terminal : Form
     {
-        private delegate void closeDelegate();
+        string _stringBuffer;
         public terminal()
         {
             InitializeComponent();
+        }
+        public string recvMsg()
+        {
+            string ret = _stringBuffer;
+            _stringBuffer = "";
+            return ret;
         }
         public void sendMsg(string str)
         {
@@ -30,6 +36,19 @@ namespace Cpu.Terminal
         private void Terminal_Shown(object sender, EventArgs e)
         {
             this.ActiveControl = null;
+        }
+
+        private void Terminal_KeyDown(object sender, KeyEventArgs e)
+        {
+        }
+
+        private void Terminal_KeyPress(object sender, KeyPressEventArgs e)
+        {
+        }
+
+        private void RichTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            _stringBuffer += e.KeyData;
         }
     }
     public class term : Generic.ICpu
@@ -77,6 +96,15 @@ namespace Cpu.Terminal
         public bool step()
         {
             //_term.sendMsg("C");
+            string s1 = _port.inP<string>(0);
+            if(s1 == null)
+            {
+                s1 = "";
+            }
+            _term.sendMsg(s1);
+            s1 = _term.recvMsg();
+            _port.outP(1, s1);
+
             return true;
         }
         public ref Port getPort()

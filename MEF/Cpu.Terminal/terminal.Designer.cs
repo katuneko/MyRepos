@@ -40,6 +40,7 @@
             this.richTextBox1.Size = new System.Drawing.Size(1547, 1082);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
+            this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RichTextBox1_KeyDown);
             // 
             // terminal
             // 
