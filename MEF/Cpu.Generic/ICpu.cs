@@ -13,20 +13,25 @@ namespace Cpu.Generic
 
     public class Port
     {
-        public Dictionary<int, dynamic> _buf;
+        public Dictionary<int, Stack<dynamic>> _buf;
         public Port(PortSpec[] spec)
         {
-            _buf = new Dictionary<int, dynamic>();
+            _buf = new Dictionary<int, Stack<dynamic>>();
         }
         public void outP<T>(int port, T t)
         {
             if (_buf.ContainsKey(port))
             {
-                _buf[port] = t;
+                if (_buf[port].Count < 100)//todo: kari
+                {
+                    _buf[port].Push(t);
+                }
             }
             else
             {
-                _buf.Add(port, t);
+                Stack<dynamic> s = new Stack<dynamic>();
+                _buf.Add(port, s);
+                _buf[port].Push(t);
             }
         }
         public T inP<T>(int port)
@@ -34,7 +39,7 @@ namespace Cpu.Generic
             dynamic d = null;
             if (_buf.ContainsKey(port))
             {
-                d = _buf[port];
+                d = _buf[port].Pop();
                 return d;
             }
             return default(T);

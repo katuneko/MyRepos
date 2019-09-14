@@ -197,11 +197,11 @@ namespace MEF
 
                 _debugSem.Wait();
                 Port p = _gcpu[i].getPort();
-                Dictionary<int, dynamic> buf = new Dictionary<int, dynamic>(p._buf);
+                Dictionary<int, Stack<dynamic>> buf = new Dictionary<int, Stack<dynamic>>(p._buf);
                 Console.WriteLine("Port State");
                 foreach (dynamic d in buf)
                 {
-                    Console.WriteLine("[{0}], Value = {1}", d.Key, d.Value);
+                    Console.WriteLine("[{0}], Value = {1}", d.Key, d.Value.Peek());
                 }
                 _debugSem.Release();
             }
