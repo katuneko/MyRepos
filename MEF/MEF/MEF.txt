@@ -1,0 +1,251 @@
+Todo
+    インフラ立ち上げ
+        グループ
+            マージ型
+        エイリアス
+        メモリ・処理性能による自動kill
+        エラー処理の強化
+        テスト追加
+    設計
+        0 CPU: MEF OSの再帰クラスでMachineの基本単位。
+    サンプルCPU
+        基本
+            出力
+                ターミナル(キーボード入力とキャラクタ出力)
+                画像読み込み
+                ファイル入力
+            入力
+                ビットマップ
+                ファイル出力
+        セット1
+            出力
+                SW
+                CLK
+            入力
+                ランプ
+            演算
+                AND
+                OR
+                NOT
+                D-FF
+        セット2
+            arnie
+        セット3
+            UM
+        セット4
+            ゲーム的なやつ
+                簡単なCPUと例題集
+                バイナリを拾うやつ
+                    Frame, Filter, Bitmapper
+                    Engine <- Senario
+                    Sound
+        セット5
+            本格的なサーバ
+        セット6
+            ソケット、ブラウザ
+
+Specs
+MEF: Multi Virtual Machine Execution System
+CPU: Connecting and Processing Unit
+IMG: Implementation of Mechanics for Gene
+
+MEF
+    Multi Virtual Machine Execution System.
+    0BootLoader.exe
+    0CPU.dll
+    /cpu
+        /arnie
+            arnie.dll
+            software.img
+
+Terminal
+    MEF User Interface
+    <Commands>
+        CPU Manage
+            ADD CPU
+                import <DLL or Folder Path>
+            COUNSTRUCT
+                generate <iCPU ID>:
+                delete <gCPU ID>
+            RUN/STOP
+                run <gCPU ID> <count>
+                stop <gCPU ID>
+            DOWNLOAD
+                download <Image Path>:
+            SYNC
+                group <gCPU ID> ...
+                ungroup <gCPU ID> ...
+            DEBUG
+                capture <gGpu ID>: 各ポートの入出力の取得。取りこぼし注意。probeは内部状態の取得でキャプチャの一種。実装はCPU側。マネージャ指定ポートを指定する。
+                quit
+            OTHER(not implement)
+                copy <gCPU ID>
+                Sync:
+
+        Connection
+            link <upstream gCPU ID> <upstream gCPU Port> <downstream gCPU ID> <downstream gCPU Port>
+            unlink <gCPU ID> <kind> <Port>
+
+        DebugPrint
+            state -cpu -link -counter
+
+        Help
+            help
+
+CPUManager
+    thread create
+    command execute
+    cpu manage
+    connection manage
+
+design
+    同期がとれることを前提としてCPUは別スレッドで動かす
+    DLLからexeの制御 CPU0を割り当てる。専用ポートでexeと通信するあたりは確信持ってから実装する。
+    Linkはdynamicがよさそう。とにかく扱いやすく。
+    素直にオブジェクトを用意する方が筋よくなりそう
+
+CPUs
+    Virtual Machine
+    <interface>
+        bool input(string src)
+        bool step()
+        void trace(int traceLevel)
+        void getPortInfo()
+        void printHelp()
+
+    <APIs>
+        byte in(uint PortID)
+        void out(uint PortID, byte c)
+    
+    <Info>
+        static
+            ID
+            CPU Name
+            Port no. and Service.
+        dynamic
+            State
+            Execution count
+            Memory usage
+
+Port Specs 
+    Multi drop Full duplex
+        in -> out side is allowed.
+    Pallarel port realize multi port.
+    NULL Port
+    Default Service
+        0: Debug out(<- CPU)
+        1: Debug in(CPU <-)
+        65534: OS out(OS <- CPU)
+        65535: OS in(CPU <- OS)
+
+Alias
+    Abc - Abc.Def.Ghi
+
+CPUs
+    Line Tracer
+    Mock
+    λ
+    SKI
+    Code Break
+    Turing Machine
+    Life Game
+    BF
+    Moles Signal
+    Sequencer
+        Rule
+            1row 1code
+            each row has 1 slf.reg and 1 slf.stk
+            common in.stk, out.stk
+            execute unit is 1col from top to bottom
+        Archtecture
+            in.stk size is 256
+            out.stk size is 256
+
+            reg val is 0 - 255
+            slf.stk size is 10 (from 0 to 9)
+            row size is 10
+            column size is 255
+        Score
+            score = step * col * row
+        OpCode
+            . nop
+            > pop from in.stk to slf.reg
+            < push from slf.reg to out.stk
+            ) pop from slf.stk to slf.reg
+            ( push from slf.reg to slf.stk
+
+            + inc slf.reg
+            - dec slf.reg
+
+            @ set slf.reg val as tgt.reg(default: next)
+            a slf.reg = slf.reg + tgt.reg
+            b slf.reg = slf.reg - tgt.reg
+            c slf.reg = slf.reg * tgt.reg
+            d slf.reg = slf.reg / tgt.reg
+            f cpy from tgt.reg to slf.reg
+            o cpy from slf.reg to tgt.reg
+
+            p pause
+            ^ continue next
+            v continue prev
+
+            = if slf.reg == tgt.reg then jump = else nop
+            x if slf.reg != 0 then jump x else nop
+            z if slf.reg == 0 then jump z else nop
+        Sample Code
+            r[000] ........
+            r[015] ........
+            r[000] ........
+            r[000] ........
+        Problem
+            move
+            add 2 items
+            only < 50
+            larger than
+            sort 16
+            overflow
+            - helf programmed
+            - connection
+    IC System
+        Axiom
+            Ix -> x
+            Cx -> xIx
+        Theory
+            Kxy -> x
+            Sxyz -> xzxy
+            Yx -> Yxx
+            TRUE
+            FALSE
+            0
+            1
+            ADD
+    SK System
+        Axiom
+            Sxyz
+            Kxy
+        Theory
+
+    FOLD
+        FOLDR
+        FOLDL
+        MAP
+
+    LOGIC
+        Elementary
+            AND
+            OR
+            NOT
+
+    ANALOG
+        原理的にできるはず
+
+    https://en.wikipedia.org/wiki/Wolfram%27s_2-state_3-symbol_Turing_machine
+    Ladder
+        ---==+----
+        -----+
+    lisp
+        car
+        cdr
+
+    https://en.wikipedia.org/wiki/Thue_(programming_language)
+    cell automaton
