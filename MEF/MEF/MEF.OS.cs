@@ -14,7 +14,7 @@ namespace MEF
         List<ImportedCpu> _icpu;
         List<GeneratedCpu> _gcpu;
         GroupManager _gmng;
-        private static readonly SemaphoreSlim _debugSem = new SemaphoreSlim(1, 1);
+        private static readonly object _debugLock = new object();
 
         public OS() {
             //ここでcpu以下のDLLをすべて読み込む
@@ -73,7 +73,7 @@ namespace MEF
             try
             {
                 GeneratedCpu genCpu = new GeneratedCpu(_icpu[iCpuId]._cputype, _icpu[iCpuId].getName());
-                genCpu.setDebugSem(_debugSem);
+                genCpu.setDebugLockObj(_debugLock);
                 _gcpu.Add(genCpu);
                 ret = true;
             }
@@ -195,24 +195,24 @@ namespace MEF
                 Console.Write(_gcpu[i].getCpuName());
                 Console.WriteLine("");
 
-                _debugSem.Wait();
-                Port p = _gcpu[i].getPort();
-                Dictionary<int, Stack<dynamic>> buf = new Dictionary<int, Stack<dynamic>>(p._buf);
-                Console.WriteLine("Port State");
-                foreach (dynamic d in buf)
-                {
-                    dynamic c;
-                    try
+                lock(_debugLock){
+                    Port p = _gcpu[i].getPort();
+                    Dictionary<int, Stack<dynamic>> buf = new Dictionary<int, Stack<dynamic>>(p._buf);
+                    Console.WriteLine("Port State");
+                    foreach (dynamic d in buf)
                     {
-                        c = d.Value.Peek();
+                        dynamic c;
+                        try
+                        {
+                            c = d.Value.Peek();
+                        }
+                        catch
+                        {
+                            c = null;
+                        }
+                        Console.WriteLine("[{0}], Value = {1}", d.Key, c);
                     }
-                    catch
-                    {
-                        c = null;
-                    }
-                    Console.WriteLine("[{0}], Value = {1}", d.Key, c);
                 }
-                _debugSem.Release();
             }
         }
         public bool probe() {

@@ -26,17 +26,23 @@ namespace MEF
             Port outP = _outCpu.getPort();
             try
             {
-
                 if (outP._buf.ContainsKey(_outPortNo))
                 {
-
                     if (inP._buf.ContainsKey(_inPortNo))
                     {
-                        inP._buf[_inPortNo] = outP._buf[_outPortNo];
+                        try
+                        {
+                            dynamic d = outP._buf[_outPortNo].Peek();
+                            inP._buf[_inPortNo].Push(d);
+                        }
+                        catch
+                        {
+
+                        }
                     }
                     else
                     {
-                        inP._buf.Add(_inPortNo, outP._buf[_outPortNo]);
+                        inP._buf[_inPortNo] = outP._buf[_outPortNo];
                     }
                 }
             }
@@ -44,7 +50,18 @@ namespace MEF
             {
 
             }
+        }
+        public void next()
+        {
+            Port outP = _outCpu.getPort();
+            try
+            {
+                outP._buf[_outPortNo].Pop();
+            }
+            catch
+            {
 
+            }
         }
     }
 }

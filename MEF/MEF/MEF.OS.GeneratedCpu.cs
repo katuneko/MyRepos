@@ -16,12 +16,12 @@ namespace MEF
         private ICpu _cpu;
         private InternalState _inState;
         private readonly SemaphoreSlim _stopSem = new SemaphoreSlim(0, 1);
-        private readonly object _locker = new object();
         private List<Link> _linkList;
-        private readonly SemaphoreSlim _linkSem = new SemaphoreSlim(1, 1);
+        //private readonly SemaphoreSlim _linkSem = new SemaphoreSlim(1, 1);
+        private readonly object _linkLock = new object();
         private Barrier _groupBarrier;
         private bool _isBarrierEnable;
-        private SemaphoreSlim _debugSem;
+        private object _debugLock;
         public enum State
         {
             Run, Stop, Halt, Invalid
@@ -43,9 +43,9 @@ namespace MEF
             _linkList = new List<Link>();
             _isBarrierEnable = false;
         }
-        public void setDebugSem(SemaphoreSlim s)//todo: debug
+        public void setDebugLockObj(object o)//todo: debug
         {
-            _debugSem = s;
+            _debugLock = o;
         }
         public bool dispose()
         {
@@ -58,19 +58,29 @@ namespace MEF
             {
                 if ((_inState == InternalState.Continue) || (_inState == InternalState.Single))
                 {
-                    _debugSem.Wait();
-                    _cpu.step();
-                    if (_isBarrierEnable)
-                    {
-                        _groupBarrier.SignalAndWait();
+                    lock(_debugLock){
+                        _cpu.step();
+                        if (_isBarrierEnable)
+                        {
+                            _groupBarrier.SignalAndWait();
+                        }
+                        lock(_linkLock){
+                            //todo: データ交換もう少しきれいにしたい
+                            foreach (Link l in _linkList)
+                            {
+                                l.send();
+                            }
+                            List<int> popPortNo= new List<int>();
+                            foreach (Link l in _linkList)
+                            {
+                                if (!popPortNo.Contains(l._outPortNo))
+                                {
+                                    l.next();
+                                }
+                                popPortNo.Add(l._outPortNo);
+                            }
+                        }
                     }
-                    _linkSem.Wait();
-                    foreach (Link l in _linkList)
-                    {
-                        l.send();
-                    }
-                    _linkSem.Release();
-                    _debugSem.Release();
                 }
                 else if (_inState == InternalState.Stop)
                 {
@@ -124,9 +134,9 @@ namespace MEF
                 }
             }
             Link newL = new Link(this, inPortNo, outCpu, outPortNo);
-            _linkSem.Wait();
-            _linkList.Add(newL);
-            _linkSem.Release();
+            lock(_linkLock){
+                _linkList.Add(newL);
+            }
             return true;//#todo
         }
         public bool removeLink(int inPortNo)
@@ -135,9 +145,9 @@ namespace MEF
             {
                 if (l._inPortNo == inPortNo)
                 {
-                    _linkSem.Wait();
-                    _linkList.Remove(l);
-                    _linkSem.Release();
+                    lock(_linkLock){
+                        _linkList.Remove(l);
+                    }
                     return true;
                 }
             }
