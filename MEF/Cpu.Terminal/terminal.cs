@@ -38,20 +38,16 @@ namespace Cpu.Terminal
             this.ActiveControl = null;
         }
 
-        private void Terminal_KeyDown(object sender, KeyEventArgs e)
+        private void RichTextBox1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-        }
-
-        private void Terminal_KeyPress(object sender, KeyPressEventArgs e)
-        {
-        }
-
-        private void RichTextBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            _stringBuffer += e.KeyData;
+            if(e.KeyData == Keys.Enter)
+            {
+                int i = richTextBox1.Lines.Length;
+                _stringBuffer += richTextBox1.Lines[i - 1] + '\n';
+            }
         }
     }
-    public class term : Generic.ICpu
+    public class term : ICpu
     {
         private string _src;
         internal terminal _term;
