@@ -85,12 +85,17 @@ namespace Cpu.Terminal
         }
         public override bool step()
         {
-            string s1 = _port.inP<string>(0);
-            if(s1 == null)
+            
+            string s1 = "";
+            try/* 受信処理 */
             {
-                s1 = "";
+                object o = _port.inP<object>(0);
+                s1 = o.ToString();
+                _term.sendMsg(s1);
             }
-            _term.sendMsg(s1);
+            catch { }
+
+            /* 送信処理 */
             s1 = _term.recvMsg();
             _port.outP(1, s1);
 
