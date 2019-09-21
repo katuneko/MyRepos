@@ -9,8 +9,6 @@ namespace Cpu.Sample
 {
     public class Sample:ICpu
     {
-        public Port _port;
-        public PortSpec[] _pspec;
         public Sample(string arg)
         {
             _pspec = new PortSpec[]
@@ -26,11 +24,7 @@ namespace Cpu.Sample
             };
             _port = new Port(_pspec);
         }
-        public bool download(string src)
-        {
-            return true;
-        }
-        public bool step()
+        public override bool step()
         {
             _port.outP(0, "test");
             _port.outP(1, true);
@@ -41,14 +35,6 @@ namespace Cpu.Sample
             bool b3 = _port.inP<bool>(6);
             _port.outP(7, !b3);
             return true;
-        }
-        public bool dispose()
-        {
-            return true;
-        }
-        public ref Port getPort()
-        {
-            return ref _port;
         }
     }
 }

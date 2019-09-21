@@ -3,12 +3,44 @@ using System.Collections.Generic;
 
 namespace Cpu.Generic
 {
-    public interface ICpu
+    public interface CpuInterface
     {
         bool download(string src);
         bool step();
         bool dispose();
         ref Port getPort();
+    }
+    public class ICpu: CpuInterface
+    {
+        public PortSpec[] _pspec;
+        public Port _port;
+        public ICpu()
+        {
+            _pspec = new PortSpec[]
+            {
+                new PortSpec(0,     typeof(string), "[I]DebugIn"),
+                new PortSpec(1,     typeof(string), "[O]DebugOut"),
+                new PortSpec(65534, typeof(string), "[I]OSIn"),
+                new PortSpec(65535, typeof(string), "[O]OSOut"),
+            };
+            _port = new Port(_pspec);
+        }
+        public virtual bool download(string src)
+        {
+            return true;
+        }
+        public virtual bool step()
+        {
+            return true;
+        }
+        public virtual bool dispose()
+        {
+            return true;
+        }
+        public ref Port getPort()
+        {
+            return ref _port;
+        }
     }
 
     public class Port

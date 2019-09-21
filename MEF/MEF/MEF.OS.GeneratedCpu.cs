@@ -13,7 +13,7 @@ namespace MEF
         private string _cpuName;
         private string _aliasName;
         private PortSpec _pspec;
-        private ICpu _cpu;
+        private CpuInterface _cpu;
         private InternalState _inState;
         private readonly SemaphoreSlim _stopSem = new SemaphoreSlim(0, 1);
         private List<Link> _linkList;
@@ -36,7 +36,7 @@ namespace MEF
             if (cpuType != null)
             {
                 var obj = Activator.CreateInstance(cpuType, "");
-                _cpu = (ICpu)obj;
+                _cpu = (CpuInterface)obj;
             }
             _inState = InternalState.Stop;
             var task = MakeThread();

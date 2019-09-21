@@ -54,8 +54,6 @@ namespace Cpu.Terminal
     public class term : Generic.ICpu
     {
         private string _src;
-        public Port _port;
-        public PortSpec[] _pspec;
         internal terminal _term;
         public term(string src)
         {
@@ -69,7 +67,7 @@ namespace Cpu.Terminal
             _term = new terminal();
             var task = MakeThread();
         }
-        public bool dispose()
+        public override bool dispose()
         {
             _term.removeThread();
             return true;
@@ -89,13 +87,8 @@ namespace Cpu.Terminal
                 return false;
             }
         }
-        public bool download(string src)
+        public override bool step()
         {
-            return true;
-        }
-        public bool step()
-        {
-            //_term.sendMsg("C");
             string s1 = _port.inP<string>(0);
             if(s1 == null)
             {
@@ -106,10 +99,6 @@ namespace Cpu.Terminal
             _port.outP(1, s1);
 
             return true;
-        }
-        public ref Port getPort()
-        {
-            return ref _port;
         }
     }
 }

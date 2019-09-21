@@ -2,7 +2,11 @@ Todo
     インフラ立ち上げ
         グループ
             マージ型
+        マルチドロップ通信Peekの解決
         エイリアス
+        0CPU
+        受信待ち
+        コマンドのエイリアス指定
         メモリ・処理性能による自動kill
         エラー処理の強化
         テスト追加
@@ -73,8 +77,8 @@ Terminal
             DOWNLOAD
                 download <Image Path>:
             SYNC
-                group <gCPU ID> ...
-                ungroup <gCPU ID> ...
+                sync <gCPU ID> ...
+                async <gCPU ID> ...
             DEBUG
                 capture <gGpu ID>: 各ポートの入出力の取得。取りこぼし注意。probeは内部状態の取得でキャプチャの一種。実装はCPU側。マネージャ指定ポートを指定する。
                 quit
@@ -139,7 +143,10 @@ Port Specs
         65535: OS in(CPU <- OS)
 
 Alias
-    Abc - Abc.Def.Ghi
+    alias Abc.Def.Ghi
+    alias Abc.Def Ghi
+    run Abc
+    group Abc
 
 CPUs
     Line Tracer

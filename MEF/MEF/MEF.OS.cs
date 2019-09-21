@@ -259,7 +259,6 @@ namespace MEF
                             //プラグインとして有効か調べる
                             if (t.IsClass && t.IsPublic && !t.IsAbstract && t.FullName != "Cpu.Generic.Port" && t.FullName != "Cpu.Generic.ICpu")
                             {
-                                //Assemblyじゃなくてもよい？
                                 ImportedCpu cpu = new ImportedCpu();
                                 cpu._cputype = t;
                                 cpuList.Add(cpu);

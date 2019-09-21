@@ -6,12 +6,10 @@ using Cpu.Generic;
 
 namespace Cpu.Arnie
 {
-    public class Arnie:Generic.ICpu
+    public class Arnie:ICpu
     {
         private string _src;
         private bool _isPrint;
-        public Port _port;
-        public PortSpec[] _pspec;
         public Arnie(string src)
         {
             _src = src;
@@ -23,19 +21,11 @@ namespace Cpu.Arnie
             };
             _port = new Port(_pspec);
         }
-        public ref Port getPort()
-        {
-            return ref _port;
-        }
         public void trace(int traceLevel)
         {
             _isPrint = (traceLevel == 0) ? false : true;
         }
-        public bool dispose()
-        {
-            return true;
-        }
-        public bool step()
+        public override bool step()
         {
             if (_isPrint)
             {
@@ -46,6 +36,11 @@ namespace Cpu.Arnie
             {
                 Console.WriteLine("\tend" + _src);
             }
+            return true;
+        }
+        public override bool download(string src)
+        {
+            _src = src;
             return true;
         }
         private string execOnce(string src)
@@ -149,11 +144,6 @@ namespace Cpu.Arnie
             StreamWriter sw = new StreamWriter(@filepath, false, Encoding.GetEncoding("UTF-8"));
             sw.Write(_src);
             sw.Close();
-        }
-        public bool download(string src)
-        {
-            _src = src;
-            return true;
         }
         public void printHelp()
         {
